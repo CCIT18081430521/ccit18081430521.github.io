@@ -8,15 +8,18 @@
   <link rel="dns-prefetch" href="https://ccit18081430521.github.io">
   <title>Python聊天小程序（一） | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="标签1,标签2">
+  <meta name="description" content="#前言今天  开始正式的Python聊天小程序的编写，首先第一步呢就是编写登陆，与注册函数。这是任何一个聊天小程序的开头！ #注册函数`def createuser():     f = open(&amp;apos;userlist.txt&amp;apos;, &amp;apos;r&amp;apos;)  # 打开已存在用户的文件，假设文件已经存在     flag = True     name = f.readline">
+<meta name="keywords" content="标签1,标签2">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python聊天小程序（一）">
 <meta property="og:url" content="https://ccit18081430521.github.io/2020/02/19/Python聊天小程序（一）/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="#前言今天  开始正式的Python聊天小程序的编写，首先第一步呢就是编写登陆，与注册函数。这是任何一个聊天小程序的开头！ #注册函数`def createuser():     f = open(&amp;apos;userlist.txt&amp;apos;, &amp;apos;r&amp;apos;)  # 打开已存在用户的文件，假设文件已经存在     flag = True     name = f.readline">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-02-19T03:50:11.691Z">
+<meta property="og:updated_time" content="2020-02-19T11:12:15.958Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python聊天小程序（一）">
+<meta name="twitter:description" content="#前言今天  开始正式的Python聊天小程序的编写，首先第一步呢就是编写登陆，与注册函数。这是任何一个聊天小程序的开头！ #注册函数`def createuser():     f = open(&amp;apos;userlist.txt&amp;apos;, &amp;apos;r&amp;apos;)  # 打开已存在用户的文件，假设文件已经存在     flag = True     name = f.readline">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -172,7 +175,63 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h1 id="前言"><a href="#前言" class="headerlink" title="#前言"></a>#前言</h1><p>今天  开始正式的Python聊天小程序的编写，首先第一步呢就是编写登陆，与注册函数。这是任何一个聊天小程序的开头！</p>
+<h1 id="注册函数"><a href="#注册函数" class="headerlink" title="#注册函数"></a>#注册函数</h1><pre><code>`def createuser():
+    f = open(&apos;userlist.txt&apos;, &apos;r&apos;)  # 打开已存在用户的文件，假设文件已经存在
+    flag = True
+    name = f.readlines()
+    f.close()
+    while flag:
+        username = input(&apos;username:&apos;)
+        flag2 = False  # 用户名已存在的标记符
+        for line in name:
+            if (username == line.split(&apos;*&apos;)[0]):
+                flag2 = True
+                print(&quot;用户名已存在，请重新输入&quot;)
+        if flag2 != True:
+            f = open(&apos;userlist.txt&apos;, &apos;a&apos;)  # 创建新的用户
+            f.write(&apos;\n&apos; + username)
+            f.write(&apos;*&apos;)
+            password = input(&apos;password:&apos;)
+            f.write(password)
+            f.close()
+            break`</code></pre><p>##讲解 ##</p>
+<p>第二行：函数是打开保存用户注册信息的一个txt文档，刚开始我们并没有建    立这个文件。我们只需要第一遍运行代码的时候将’r’改为’w’就可以了。  </p>
+<p>第九行，第十行，第十一行：判断用户是否存在</p>
+<h1 id="登陆函数"><a href="#登陆函数" class="headerlink" title="登陆函数"></a>登陆函数</h1><pre><code>def login():  # 登入函数，输入密码错误三次则锁定用户
+    count = 0  # 密码错误计数,3次则锁定
+    f = open(&apos;userlist.txt&apos;, &apos;r&apos;)
+    info = f.readlines()
+    f.close()
+    user = None  # 重复用户标记符
+    while flag:
+        flag2 = False
+        f2 = open(&apos;blocklist.txt&apos;, &apos;r&apos;)
+        block_name = f2.readlines()
+        f2.close()
+        username = input(&apos;username:&apos;)
+        if user == None:  # user没有使用过，则直接赋予输入的用户名
+            user = username
+        elif user != username:  # 如果下一次输入的用户名不一样，则记录上一次的用户名，同时计数清零
+            user = username
+            count = 0;
+        for line in block_name:  # 检查用户名是否被锁定，锁定则返回主菜单
+            if username == line.strip(&apos;\n&apos;):
+                me.showinfo(&apos;该用户已经被锁定，请联系管理员&apos;)
+        password = input(&apos;password:&apos;)
+        for line in info:
+            if (username == line.split(&apos;*&apos;)[0] and password == line.split(&apos;*&apos;)[1].strip(&apos;\n&apos;)):
+                me.showinfo(&apos;登入成功！&apos;)
+                flag2 = True
+        if flag2 == False:
+            count += 1
+            me.showinfo(&quot;用户名或密码错误，请重新输入&quot;)
+        if count == 3:  # 错误三次，把用户名添加到锁定列表中
+            me.showinfo(&apos;密码错误次数过多，该用户已被锁定&apos;)
+            f3 = open(&apos;blocklist.txt&apos;, &apos;a&apos;)
+            f3.write(&apos;\n&apos; + username)
+            f3.close()
+            count = 0  # 加入黑名单后重置计数</code></pre>
       
 
       
